@@ -28,10 +28,31 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @GetMapping
-    public ResponseEntity<Collection<Faculty>> findFaculties(@RequestParam(required = false) String color) {
+    @GetMapping("color")
+    public ResponseEntity<Collection<Faculty>> findFacultiesColor(@RequestParam(required = false) String color) {
         if (color != null && !color.isBlank()) {
             return ResponseEntity.ok(facultyService.findByColor(color));
+        }
+        return ResponseEntity.ok(Collections.emptyList());
+    }
+
+    @GetMapping
+    public ResponseEntity<Collection<Faculty>> findFacultiesNameOrColor(@RequestParam(required = false) String color,
+                                                                        @RequestParam(required = false) String name) {
+        if (color != null && !color.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByColor(color));
+        }
+        if (name != null && !name.isBlank() && color != null && !color.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByNameIgnoreCaseOrColorIgnoreCase(name, color));
+        }
+        return ResponseEntity.ok(Collections.emptyList());
+    }
+
+    @GetMapping("student")
+    public ResponseEntity<Collection<Faculty>> findByStudent(@RequestParam(required = false) Long id) {
+        Faculty student = facultyService.getStudentInFaculty(id);
+        if (student == null) {
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(Collections.emptyList());
     }

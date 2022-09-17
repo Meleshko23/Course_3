@@ -3,6 +3,7 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
@@ -28,13 +29,37 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping
-    public ResponseEntity<Collection<Student>> findStudents(@RequestParam(required = false) int age) {
+    @GetMapping("age")
+    public ResponseEntity<Collection<Student>> findStudentsAge(@RequestParam(required = false) int age) {
         if (age > 0) {
             return ResponseEntity.ok(studentService.findByAge(age));
         }
         return ResponseEntity.ok(Collections.emptyList());
     }
+
+    @GetMapping
+    public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam(required = false) int age,
+                                                                @RequestParam(required = false) int minAge,
+                                                                @RequestParam(required = false) int maxAge) {
+
+        if (age >= minAge) {
+            return ResponseEntity.ok(studentService.findByAge(age));
+        }
+        if (age <= maxAge) {
+            return ResponseEntity.ok(studentService.findByAge(age));
+        }
+        return ResponseEntity.ok(Collections.emptyList());
+    }
+
+    @GetMapping("faculty")
+    public ResponseEntity<Faculty> findFacultyByStudent(@RequestParam(required = false) Long id) {
+        Faculty faculty = studentService.getFacultyOfStudent(id);
+        if (faculty == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculty);
+    }
+
 
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
