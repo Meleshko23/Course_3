@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -98,5 +99,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Collection<Student> getLastFiveStudents() {
         return null;
+    }
+
+    public Set<Student> findByAgeBetween(int minAge, int maxAge) {
+        return (Set<Student>) studentRepository.findByAgeBetween(minAge, maxAge);
     }
 }

@@ -8,6 +8,7 @@ import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/student")
@@ -28,7 +29,7 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping
+    @GetMapping(params = {"age"})
     public ResponseEntity<Collection<Student>> findStudent(@RequestParam(required = false) int age) {
         if (age > 0) {
             return ResponseEntity.ok(studentServiceImpl.findByAge(age));
@@ -36,19 +37,12 @@ public class StudentController {
         return ResponseEntity.ok(Collections.emptyList());
     }
 
-//    @GetMapping
-//    public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam(required = false) int age,
-//                                                                @RequestParam(required = false) int minAge,
-//                                                                @RequestParam(required = false) int maxAge) {
-//
-//        if (age >= minAge) {
-//            return ResponseEntity.ok(studentServiceImpl.findByAge(age));
-//        }
-//        if (age <= maxAge) {
-//            return ResponseEntity.ok(studentServiceImpl.findByAge(age));
-//        }
-//        return ResponseEntity.ok(Collections.emptyList());
-//    }
+    @GetMapping(params = {"minAge", "maxAge"})
+    public Set<Student> findByAgeBetween(
+            @RequestParam(required = false) int minAge,
+            @RequestParam(required = false) int maxAge) {
+        return studentServiceImpl.findByAgeBetween(minAge, maxAge);
+    }
 
 //    @GetMapping("faculty")
 //    public ResponseEntity<Faculty> findFacultyByStudent(@RequestParam(required = false) Long id) {
