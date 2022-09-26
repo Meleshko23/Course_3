@@ -1,64 +1,35 @@
 package ru.hogwarts.school.service;
 
 
-import org.springframework.stereotype.Service;
-import ru.hogwarts.school.model.Faculty;
+import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collection;
 
-@Service
-public class StudentService {
+public interface StudentService {
 
-    private final StudentRepository studentRepository;
+    Student addStudent(Student student);
 
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
+    Student findStudent(Long id);
 
-    public Student addStudent(Student student) {
-        return studentRepository.save(student);
-    }
+    Student editStudent(Student student);
 
-    public Student findStudent(long id) {
-        return studentRepository.findById(id).get();
-    }
+    void deleteStudent(Long id);
 
-    public Student editStudent(long id, Student student) {
-        return studentRepository.save(student);
-    }
+    Collection<Student> findByAge(int age);
 
-    public void deleteStudent(long id) {
-        studentRepository.deleteById(id);
-    }
+    Avatar findAvatar(long studentId);
 
-    public Collection<Student> findByAge(int age) {
-        ArrayList<Student> result = new ArrayList<>();
-        for (Student student : studentRepository.findAll()) {
-            if (student.getAge() == age) {
-                result.add(student);
-            }
-        }
-        return result;
-    }
+    void uploadAvatar(Long studentId, MultipartFile file) throws IOException;
 
-    public ArrayList<Student> findByAgeBetween(int minAge, int maxAge) {
-        ArrayList<Student> result = new ArrayList<>();
-        for (Student student : studentRepository.findAll()) {
-            if (student.getAge() >= minAge && student.getAge() <= maxAge) {
-                result.add(student);
-            }
-        }
-        return result;
-    }
+    Collection<Student> getAll();
 
-    public Faculty getFacultyOfStudent(Long id) {
-        Student student = studentRepository.findById(id).get();
-        if (student != null) {
-            return student.getFaculty();
-        }
-        return null;
-    }
+    Integer getCountOfAllStudents();
+
+    Double getAverageAgeOfStudents();
+
+    Collection<Student> getLastFiveStudents();
+
 }

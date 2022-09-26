@@ -20,7 +20,6 @@ public class Faculty {
     private Collection<Student> students;
 
     public Faculty() {
-
     }
 
     public Faculty(long id, String name, String color) {
@@ -75,7 +74,11 @@ public class Faculty {
         this.color = color;
     }
 
-    public Faculty getStudents() {
-        return (Faculty) students;
+    public Collection<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Collection<Student> students) {
+        this.students = students;
     }
 }
