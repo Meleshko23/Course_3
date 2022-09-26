@@ -1,10 +1,13 @@
 package ru.hogwarts.school.service.impl;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
@@ -20,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Objects;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -30,6 +34,7 @@ public class AvatarServiceImpl implements AvatarService {
 
     private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
+    Logger logger = LoggerFactory.getLogger(AvatarServiceImpl.class);
 
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
@@ -93,5 +98,16 @@ public class AvatarServiceImpl implements AvatarService {
     public Page<Avatar> getAllAvatars(Integer pageNo, Integer pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         return avatarRepository.findAll(paging);
+    }
+
+    public ResponseEntity<Collection<Avatar>> getAll(Integer pageNumber, Integer pageSize) {
+        logger.info("method to get all of avatars was invoked");
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        Collection<Avatar> avatarsList = avatarRepository.findAll(pageRequest).getContent();
+        if (avatarsList.isEmpty()) {
+            logger.error("There is no avatars");
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(avatarsList);
     }
 }

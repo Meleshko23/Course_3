@@ -1,7 +1,6 @@
 package ru.hogwarts.school.controller;
 
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.service.AvatarService;
+import ru.hogwarts.school.service.impl.AvatarServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("avatar")
@@ -24,8 +25,8 @@ public class AvatarController {
 
     private final AvatarService avatarService;
 
-    public AvatarController(AvatarService avatarService) {
-        this.avatarService = avatarService;
+    public AvatarController(AvatarServiceImpl avatarServiceImpl) {
+        this.avatarService = avatarServiceImpl;
     }
 
     @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -62,9 +63,15 @@ public class AvatarController {
         }
     }
 
+//    @GetMapping(value = "/all")
+//    public Page<Avatar> getAllAvatars(@RequestParam("page") int page, @RequestParam("size") int size) {
+//        return avatarService.getAllAvatars(page, size);
+//    }
+
     @GetMapping(value = "/all")
-    public Page<Avatar> getAllAvatars(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return avatarService.getAllAvatars(page, size);
+    public ResponseEntity<Collection<Avatar>> getAll(@RequestParam("page") Integer pageNumber,
+                                                     @RequestParam("size") Integer pageSize) {
+        return avatarService.getAll(pageNumber, pageSize);
     }
 
 }
