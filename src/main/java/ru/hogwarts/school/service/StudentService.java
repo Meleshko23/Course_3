@@ -3,10 +3,12 @@ package ru.hogwarts.school.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
 public interface StudentService {
 
@@ -32,4 +34,9 @@ public interface StudentService {
 
     Collection<Student> getLastFiveStudents();
 
+    Set<Student> findByAgeBetween(int minAge, int maxAge);
+
+    Faculty getFacultyOfStudent(Long id);
+
+//    Faculty getFacultyOfStudent(Long id);
 }

@@ -2,7 +2,6 @@ package ru.hogwarts.school.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -22,73 +21,51 @@ public class FacultyServiceImpl implements FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
-    public ResponseEntity<Faculty> createFaculty(Faculty faculty) {
-        logger.info("Was invoked method to create faculty");
-        if (faculty == null) {
-            logger.error("Can't create faculty, when faculty is null");
-            return ResponseEntity.badRequest().build();
-        }
+    public Faculty createFaculty(Faculty faculty) {
         logger.debug("Was created {}", faculty);
-        return ResponseEntity.ok(facultyRepository.save(faculty));
+        return facultyRepository.save(faculty);
     }
 
-    public ResponseEntity<Faculty> getFacultyById(Long id) {
+    public Faculty getFacultyById(Long id) {
         logger.info("Was invoked method to find faculty by id={}", id);
         Optional<Faculty> byId = facultyRepository.findById(id);
         if (byId.isEmpty()) {
             logger.error("There is no faculty with id={}", id);
-            return ResponseEntity.notFound().build();
+            return facultyRepository.findById(id).orElse(null);
         }
         logger.debug("Faculty was founder by id={}", id);
-        return ResponseEntity.ok(byId.get());
+        return byId.get();
     }
 
-    public ResponseEntity<Faculty> updateFaculty(Faculty faculty) {
+    public Faculty updateFaculty(Faculty faculty) {
         logger.info("Was invoked method to update faculty");
-        if (faculty == null) {
-            logger.error("Can't update faculty, when faculty is null");
-            return ResponseEntity.badRequest().build();
-        }
         if (facultyRepository.findById(faculty.getId()).isEmpty()) {
             logger.error("There is no faculty with your id");
-            return ResponseEntity.notFound().build();
+            return facultyRepository.findById(faculty.getId()).orElse(null);
         }
         logger.debug("{} was updated", faculty);
-        return ResponseEntity.ok(facultyRepository.save(faculty));
+        return facultyRepository.save(faculty);
     }
 
-    public ResponseEntity<Faculty> removeFaculty(Long id) {
+    public void removeFaculty(Long id) {
         logger.info("Was invoked method to delete faculty");
         facultyRepository.deleteById(id);
-        logger.debug("Faculty was deleted by id={}", id);
-        return ResponseEntity.ok().build();
-    }
-
-    public ResponseEntity<List<Faculty>> getFacultiesByColor(String color) {
-        logger.info("Was invoked method to find faculty by color");
-        List<Faculty> facultyList = facultyRepository.findAllByColor(color);
-        if (facultyList.isEmpty()) {
-            logger.error("There is no faculty with color", color);
-            return ResponseEntity.notFound().build();
-        }
-        logger.debug("Faculty was founder by color", color);
-        return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<Collection<Faculty>> getAll() {
-        return null;
+    public Collection<Faculty> getAll() {
+        return facultyRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<List<Faculty>> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String str) {
-        return null;
+    public List<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String name, String color) {
+        return facultyRepository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(name, color);
     }
 
-    @Override
-    public ResponseEntity<String> getFacultyNameWithMaxLength() {
-        return null;
-    }
+//    @Override
+//    public String getFacultyNameWithMaxLength() {
+//        return null;
+//    }
 }
 
 

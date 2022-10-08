@@ -7,42 +7,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
-import ru.hogwarts.school.service.StudentService;
-import ru.hogwarts.school.service.impl.AvatarServiceImpl;
 import ru.hogwarts.school.service.impl.FacultyServiceImpl;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(controllers = FacultyController.class)
 public class FacultyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
-
     @MockBean
     private FacultyRepository facultyRepository;
-
-    @MockBean
-    private AvatarServiceImpl avatarServiceImpl;
-
-    @MockBean
-    private StudentService studentService;
 
     @SpyBean
     private FacultyServiceImpl facultyService;
@@ -65,8 +51,8 @@ public class FacultyControllerTest {
 
 
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
-        when(facultyRepository.findById(eq(id))).thenReturn(Optional.of(faculty));
-        when(facultyRepository.findAllByColor(eq(color))).thenReturn(List.of(faculty));
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(faculty));
+//        eq(id)
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty")

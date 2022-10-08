@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.StudentRepository;
@@ -37,7 +38,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public Student findStudent(Long id) {
-        return studentRepository.findById(id).orElseThrow();
+        return studentRepository.findById(id).orElse(null);
     }
 
     public Student editStudent(Student student) {
@@ -53,7 +54,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public Avatar findAvatar(long studentId) {
-        return avatarRepository.findByStudentId(studentId).orElseThrow();
+        return avatarRepository.findByStudentId(studentId).orElse(null);
     }
 
     public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
@@ -105,5 +106,11 @@ public class StudentServiceImpl implements StudentService {
         return (Set<Student>) studentRepository.findByAgeBetween(minAge, maxAge);
     }
 
-
+    public Faculty getFacultyOfStudent(Long id) {
+        Student student = studentRepository.findById(id).orElse(null);
+        if (student != null) {
+            return student.getFaculty();
+        }
+        return null;
+    }
 }

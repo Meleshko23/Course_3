@@ -4,8 +4,7 @@ from student;
 -- 1. Получить всех студентов, возраст которых находится между 10 и 20
 select *
 from student
-where age > 10
-  and age < 20;
+where age between 10 and 20;
 
 -- 2. Получить всех студентов, но отобразить только список их имен.
 select name

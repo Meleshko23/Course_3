@@ -1,6 +1,5 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
 
 import java.util.Collection;
@@ -8,20 +7,19 @@ import java.util.List;
 
 public interface FacultyService {
 
-    ResponseEntity<Faculty> createFaculty(Faculty faculty);
+    Faculty createFaculty(Faculty faculty);
 
-    ResponseEntity<Faculty> getFacultyById(Long id);
+    Faculty getFacultyById(Long id);
 
-    ResponseEntity<Faculty> updateFaculty(Faculty faculty);
+    Faculty updateFaculty(Faculty faculty);
 
-    ResponseEntity<Faculty> removeFaculty(Long id);
+    void removeFaculty(Long id);
 
-    ResponseEntity<List<Faculty>> getFacultiesByColor(String color);
+    Collection<Faculty> getAll();
 
-    ResponseEntity<Collection<Faculty>> getAll();
+    List<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String name, String color);
 
-    ResponseEntity<List<Faculty>> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String str);
 
-    ResponseEntity<String> getFacultyNameWithMaxLength();
+//    String getFacultyNameWithMaxLength();
 
 }
