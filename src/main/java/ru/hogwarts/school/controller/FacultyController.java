@@ -6,7 +6,6 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -29,17 +28,14 @@ public class FacultyController {
         return facultyServiceImpl.getAll();
     }
 
-    @GetMapping(params = {"name", "color"})
-    public ResponseEntity<List<Faculty>> findFacultiesNameOrColor(@RequestParam(required = false) String name,
-                                                                  @RequestParam(required = false) String color) {
-        if (name != null && !name.isBlank() && color != null && !color.isBlank()) {
-            return ResponseEntity.ok(facultyServiceImpl.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(name, color));
-        }
-        return ResponseEntity.ok(Collections.emptyList());
+    @GetMapping
+    public ResponseEntity<Collection<Faculty>> findFacultiesNameOrColor(@RequestParam String nameOrColor) {
+        Collection<Faculty> fa = facultyServiceImpl.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(nameOrColor);
+        return ResponseEntity.ok(fa);
     }
 
     @GetMapping("/{id}/students")
-    public ResponseEntity<List<Faculty>> findByStudentsFaculty(@RequestParam(required = false) Long id) {
+    public ResponseEntity<List<Faculty>> findByStudentsFaculty(@RequestParam(required = false) @PathVariable Long id) {
         Faculty student = facultyServiceImpl.getFacultyById(id);
         if (student == null) {
             return ResponseEntity.notFound().build();

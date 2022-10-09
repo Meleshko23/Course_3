@@ -8,8 +8,6 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
@@ -27,24 +25,24 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     public Faculty getFacultyById(Long id) {
-        logger.info("Was invoked method to find faculty by id={}", id);
-        Optional<Faculty> byId = facultyRepository.findById(id);
-        if (byId.isEmpty()) {
-            logger.error("There is no faculty with id={}", id);
-            return facultyRepository.findById(id).orElse(null);
-        }
-        logger.debug("Faculty was founder by id={}", id);
-        return byId.get();
+//        logger.info("Was invoked method to find faculty by id={}", id);
+//        Optional<Faculty> byId = facultyRepository.findById(id);
+//        if (byId.isEmpty()) {
+//            logger.error("There is no faculty with id={}", id);
+        return facultyRepository.findById(id).orElse(null);
+//        }
+//        logger.debug("Faculty was founder by id={}", id);
+//        return byId.get();
     }
 
     public Faculty updateFaculty(Faculty faculty) {
-        logger.info("Was invoked method to update faculty");
-        if (facultyRepository.findById(faculty.getId()).isEmpty()) {
-            logger.error("There is no faculty with your id");
-            return facultyRepository.findById(faculty.getId()).orElse(null);
-        }
-        logger.debug("{} was updated", faculty);
-        return facultyRepository.save(faculty);
+//        logger.info("Was invoked method to update faculty");
+//        if (facultyRepository.findById(faculty.getId()).isEmpty()) {
+//            logger.error("There is no faculty with your id");
+        return facultyRepository.findById(faculty.getId()).orElse(null);
+//        }
+//        logger.debug("{} was updated", faculty);
+//        return facultyRepository.save(faculty);
     }
 
     public void removeFaculty(Long id) {
@@ -58,8 +56,8 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public List<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String name, String color) {
-        return facultyRepository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(name, color);
+    public Collection<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String nameOrColor) {
+        return facultyRepository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(nameOrColor, nameOrColor);
     }
 
 //    @Override

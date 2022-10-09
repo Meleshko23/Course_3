@@ -3,7 +3,6 @@ package ru.hogwarts.school.service;
 import ru.hogwarts.school.model.Faculty;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface FacultyService {
 
@@ -17,7 +16,9 @@ public interface FacultyService {
 
     Collection<Faculty> getAll();
 
-    List<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String name, String color);
+//    List<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String name, String color);
+
+    Collection<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String nameOrColor);
 
 
 //    String getFacultyNameWithMaxLength();

@@ -1,29 +1,28 @@
 package ru.hogwarts.school.controller;
 
-import net.minidev.json.JSONObject;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.repository.StudentRepository;
-import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
-import java.util.List;
-import java.util.Optional;
+import java.net.URI;
+import java.util.Collection;
+import java.util.Set;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
 
@@ -33,72 +32,160 @@ public class StudentControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @MockBean
-    private StudentRepository studentRepository;
-
-    @SpyBean
-    private StudentServiceImpl studentService;
-
-    @InjectMocks
-    private StudentController studentController;
+    @Test
+    public void testCreateStudent() {
+        Student student = givenStudentWith("studentName", 25);
+        ResponseEntity<Student> response = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+        thenStudentHasBeenCreated(response);
+    }
 
     @Test
-    public void testStudents() throws Exception {
-        final String name = "Ivanov Ivan";
-        final int age = 21;
-        final long id = 1;
+    public void testGetStudentById() {
+        Student student = givenStudentWith("studentName", 25);
+        ResponseEntity<Student> createResponse = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+        thenStudentHasBeenCreated(createResponse);
 
-        Student student = new Student(id, name, age);
-
-        JSONObject studentObject = new JSONObject();
-        studentObject.put("id", id);
-        studentObject.put("name", name);
-        studentObject.put("age", age);
-
-
-        when(studentRepository.save(any(Student.class))).thenReturn(student);
-        when(studentRepository.findAllByAge(eq(age))).thenReturn(List.of(student));
-        when(studentRepository.findById(eq(id))).thenReturn(Optional.of(student));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/student")
-                        .content(studentObject.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.name").value(name))
-                .andExpect(jsonPath("$.age").value(age));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .put("/student")
-                        .content(studentObject.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.name").value(name))
-                .andExpect(jsonPath("$.age").value(age));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student/" + id)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.name").value(name))
-                .andExpect(jsonPath("$.age").value(age));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student?age" + age)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].name").value(name))
-                .andExpect(jsonPath("$[0].age").value(age));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/student/" + id)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        Student createdStudent = createResponse.getBody();
+        thenStudentWithIdHasBeenFound(createdStudent.getId(), createdStudent);
     }
+
+    @Test
+    public void testFindByAge() {
+        Student student_18 = givenStudentWith("studentName3", 18);
+        Student student_25 = givenStudentWith("studentName1", 25);
+        Student student_28 = givenStudentWith("studentName2", 28);
+        Student student_32 = givenStudentWith("studentName4", 32);
+
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_18);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_25);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_28);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_32);
+
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("age", "25");
+        thenStudentsAreFoundByCriteria(queryParams, student_25);
+    }
+
+    @Test
+    public void testFindByAgeBetween() {
+        Student student_18 = givenStudentWith("studentName3", 18);
+        Student student_25 = givenStudentWith("studentName1", 25);
+        Student student_28 = givenStudentWith("studentName2", 28);
+        Student student_32 = givenStudentWith("studentName4", 32);
+
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_18);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_25);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_28);
+        whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_32);
+
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("minAge", "20");
+        queryParams.add("maxAge", "30");
+        thenStudentsAreFoundByCriteria(queryParams, student_25, student_28);
+    }
+
+    @Test
+    public void testUpdate() {
+        Student student = givenStudentWith("studentName", 25);
+
+        ResponseEntity<Student> responseEntity = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+        thenStudentHasBeenCreated(responseEntity);
+        Student createdStudent = responseEntity.getBody();
+
+        whenUpdatingStudent(createdStudent, 32, "newName");
+        thenStudentHasBeenUpdated(createdStudent, 32, "newName");
+    }
+
+    @Test
+    public void testDelete() {
+        Student student = givenStudentWith("studentName", 25);
+
+        ResponseEntity<Student> responseEntity = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
+        thenStudentHasBeenCreated(responseEntity);
+        Student createdStudent = responseEntity.getBody();
+
+        whenDeletingStudent(createdStudent);
+        thenStudentNotFound(createdStudent);
+    }
+
+    private void thenStudentNotFound(Student createdStudent) {
+        URI getUri = getUriBuilder().path("/{id}").buildAndExpand(createdStudent.getId()).toUri();
+        ResponseEntity<Student> emptyRs = restTemplate.getForEntity(getUri, Student.class);
+
+        assertThat(emptyRs.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    private void whenDeletingStudent(Student createdStudent) {
+        restTemplate.delete(getUriBuilder().path("/{id}").buildAndExpand(createdStudent.getId()).toUri());
+    }
+
+    private void thenStudentHasBeenUpdated(Student createdStudent, int newAge, String newName) {
+        URI getUri = getUriBuilder().path("/{id}").buildAndExpand(createdStudent.getId()).toUri();
+        ResponseEntity<Student> updatedStudentRs = restTemplate.getForEntity(getUri, Student.class);
+
+        assertThat(updatedStudentRs.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(updatedStudentRs.getBody()).isNotNull();
+        assertThat(updatedStudentRs.getBody().getAge()).isEqualTo(newAge);
+        assertThat(updatedStudentRs.getBody().getName()).isEqualTo(newName);
+    }
+
+    private void whenUpdatingStudent(Student createdStudent, int newAge, String newName) {
+        createdStudent.setAge(newAge);
+        createdStudent.setName(newName);
+
+        restTemplate.put(getUriBuilder().build().toUri(), createdStudent);
+    }
+
+    private void thenStudentsAreFoundByCriteria(MultiValueMap<String, String> queryParams, Student... students) {
+        URI uri = getUriBuilder().queryParams(queryParams).build().toUri();
+
+        ResponseEntity<Set<Student>> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Set<Student>>() {
+                });
+
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Set<Student> actualResult = response.getBody();
+        resetIds(actualResult);
+        Assertions.assertThat(actualResult).containsExactlyInAnyOrder(students);
+    }
+
+    private void resetIds(Collection<Student> students) {
+        students.forEach(it -> it.setId(null));
+    }
+
+
+    private void thenStudentWithIdHasBeenFound(Long studentId, Student student) {
+        URI uri = getUriBuilder().path("/{id}").buildAndExpand(studentId).toUri();
+        ResponseEntity<Student> response = restTemplate.getForEntity(uri, Student.class);
+        assertThat(response.getBody()).isEqualTo(student);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    private Student givenStudentWith(String name, int age) {
+        return new Student(name, age);
+    }
+
+    private void thenStudentHasBeenCreated(ResponseEntity<Student> response) {
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getId()).isNotNull();
+    }
+
+    private UriComponentsBuilder getUriBuilder() {
+        return UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port(port)
+                .path("/hogwarts/student");
+    }
+
+    private ResponseEntity<Student> whenSendingCreateStudentRequest(URI uri, Student student) {
+        return restTemplate.postForEntity(uri, student, Student.class);
+    }
+
 }
