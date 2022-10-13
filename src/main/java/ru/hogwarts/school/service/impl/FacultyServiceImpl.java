@@ -39,7 +39,7 @@ public class FacultyServiceImpl implements FacultyService {
 //        logger.info("Was invoked method to update faculty");
 //        if (facultyRepository.findById(faculty.getId()).isEmpty()) {
 //            logger.error("There is no faculty with your id");
-        return facultyRepository.findById(faculty.getId()).orElse(null);
+        return facultyRepository.save(faculty);
 //        }
 //        logger.debug("{} was updated", faculty);
 //        return facultyRepository.save(faculty);

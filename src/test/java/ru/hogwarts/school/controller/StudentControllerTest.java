@@ -34,14 +34,14 @@ public class StudentControllerTest {
 
     @Test
     public void testCreateStudent() {
-        Student student = givenStudentWith("studentName", 25);
+        Student student = givenStudentWith(1L, "studentName", 25);
         ResponseEntity<Student> response = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
         thenStudentHasBeenCreated(response);
     }
 
     @Test
     public void testGetStudentById() {
-        Student student = givenStudentWith("studentName", 25);
+        Student student = givenStudentWith(1L, "studentName", 25);
         ResponseEntity<Student> createResponse = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
         thenStudentHasBeenCreated(createResponse);
 
@@ -51,10 +51,10 @@ public class StudentControllerTest {
 
     @Test
     public void testFindByAge() {
-        Student student_18 = givenStudentWith("studentName3", 18);
-        Student student_25 = givenStudentWith("studentName1", 25);
-        Student student_28 = givenStudentWith("studentName2", 28);
-        Student student_32 = givenStudentWith("studentName4", 32);
+        Student student_18 = givenStudentWith(1L, "studentName3", 18);
+        Student student_25 = givenStudentWith(2L, "studentName1", 25);
+        Student student_28 = givenStudentWith(3L, "studentName2", 28);
+        Student student_32 = givenStudentWith(4L, "studentName4", 32);
 
         whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_18);
         whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_25);
@@ -68,10 +68,10 @@ public class StudentControllerTest {
 
     @Test
     public void testFindByAgeBetween() {
-        Student student_18 = givenStudentWith("studentName3", 18);
-        Student student_25 = givenStudentWith("studentName1", 25);
-        Student student_28 = givenStudentWith("studentName2", 28);
-        Student student_32 = givenStudentWith("studentName4", 32);
+        Student student_18 = givenStudentWith(1L, "studentName3", 18);
+        Student student_25 = givenStudentWith(2L, "studentName1", 25);
+        Student student_28 = givenStudentWith(3L, "studentName2", 28);
+        Student student_32 = givenStudentWith(4L, "studentName4", 32);
 
         whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_18);
         whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student_25);
@@ -86,7 +86,7 @@ public class StudentControllerTest {
 
     @Test
     public void testUpdate() {
-        Student student = givenStudentWith("studentName", 25);
+        Student student = givenStudentWith(1L, "studentName", 25);
 
         ResponseEntity<Student> responseEntity = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
         thenStudentHasBeenCreated(responseEntity);
@@ -98,7 +98,7 @@ public class StudentControllerTest {
 
     @Test
     public void testDelete() {
-        Student student = givenStudentWith("studentName", 25);
+        Student student = givenStudentWith(1L, "studentName", 25);
 
         ResponseEntity<Student> responseEntity = whenSendingCreateStudentRequest(getUriBuilder().build().toUri(), student);
         thenStudentHasBeenCreated(responseEntity);
@@ -166,8 +166,8 @@ public class StudentControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
-    private Student givenStudentWith(String name, int age) {
-        return new Student(name, age);
+    private Student givenStudentWith(Long id, String name, int age) {
+        return new Student(id, name, age);
     }
 
     private void thenStudentHasBeenCreated(ResponseEntity<Student> response) {

@@ -28,7 +28,7 @@ public class FacultyController {
         return facultyServiceImpl.getAll();
     }
 
-    @GetMapping
+    @GetMapping(params = "nameOrColor")
     public ResponseEntity<Collection<Faculty>> findFacultiesNameOrColor(@RequestParam String nameOrColor) {
         Collection<Faculty> fa = facultyServiceImpl.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(nameOrColor);
         return ResponseEntity.ok(fa);
