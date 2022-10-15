@@ -43,6 +43,21 @@ public class FacultyController {
         return ResponseEntity.ok(List.of(student));
     }
 
+    @GetMapping("/name/maxLength")
+    public ResponseEntity<List<String>> getLongestNameFaculties() {
+        List<String> result = facultyServiceImpl.getLongestNameFaculties();
+        if (result == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/sum")
+    public ResponseEntity<Integer> sum() {
+        Integer sum = facultyServiceImpl.sum();
+        return ResponseEntity.ok(sum);
+    }
+
     @PostMapping
     public Faculty createFaculty(@RequestBody Faculty faculty) {
         return facultyServiceImpl.createFaculty(faculty);

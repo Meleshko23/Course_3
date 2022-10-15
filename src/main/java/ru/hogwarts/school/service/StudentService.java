@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.Student;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public interface StudentService {
@@ -37,6 +38,10 @@ public interface StudentService {
     Set<Student> findByAgeBetween(int minAge, int maxAge);
 
     Faculty getFacultyOfStudent(Long id);
+
+    List<String> getStudentsNameWithA();
+
+    Double getAvgAgeStudentStream();
 
 //    Faculty getFacultyOfStudent(Long id);
 }

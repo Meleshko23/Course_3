@@ -8,6 +8,7 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -51,6 +52,22 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(faculty);
+    }
+
+    @GetMapping("/names/WithA")
+    public ResponseEntity<List<String>> getStudentsNameWithA() {
+        List<String> result = studentServiceImpl.getStudentsNameWithA();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/avgAgeStream")
+    public ResponseEntity<Double> getAvgAgeStudentStream() {
+        Double avgAge = studentServiceImpl.getAvgAgeStudentStream();
+        if (avgAge == null) {
+            ResponseEntity.notFound();
+            ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(avgAge);
     }
 
     @PostMapping

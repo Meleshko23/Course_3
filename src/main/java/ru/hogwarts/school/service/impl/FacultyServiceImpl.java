@@ -8,6 +8,10 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
@@ -51,10 +55,33 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(nameOrColor, nameOrColor);
     }
 
-//    @Override
-//    public String getFacultyNameWithMaxLength() {
-//        return null;
-//    }
+    @Override
+    public List<String> getLongestNameFaculties() {
+        Stream<Faculty> facultyStream = facultyRepository.findAll().stream();
+        Integer maxLength = facultyStream
+                .map(Faculty::getName)
+                .map(String::length)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+        if (maxLength == null) {
+            return null;
+        }
+        Stream<Faculty> facultyStream2 = facultyRepository.findAll().stream();
+        return facultyStream2
+                .map(Faculty::getName)
+                .filter((name) -> name.length() == maxLength)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer sum() {
+        return Stream
+                .iterate(1, a -> a + 1)
+                .limit(1_000_000)
+                .parallel()
+                .reduce(0, Integer::sum);
+    }
+
 }
 
 
