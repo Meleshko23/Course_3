@@ -43,5 +43,9 @@ public interface StudentService {
 
     Double getAvgAgeStudentStream();
 
+    void getNameStudentsThread();
+
+    void getNameStudentsThreadSynch();
+
 //    Faculty getFacultyOfStudent(Long id);
 }

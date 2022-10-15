@@ -70,6 +70,16 @@ public class StudentController {
         return ResponseEntity.ok(avgAge);
     }
 
+    @GetMapping("/nameThread")
+    public void getNameStudentsThread() {
+        studentServiceImpl.getNameStudentsThread();
+    }
+
+    @GetMapping("/nameThreadSynch")
+    public void getNameStudentsThreadSynch() {
+        studentServiceImpl.getNameStudentsThreadSynch();
+    }
+
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
         return studentServiceImpl.addStudent(student);

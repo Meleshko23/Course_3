@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -150,5 +151,62 @@ public class StudentServiceImpl implements StudentService {
                 .mapToInt(Student::getAge)
                 .average()
                 .orElse(0);
+    }
+
+    @Override
+    public void getNameStudentsThread() {
+        Stream<Student> streamStudent = studentRepository.findAll().stream();
+        List<String> studentsName = streamStudent
+                .map(a -> a.getName())
+                .collect(Collectors.toList());
+
+        System.out.println(studentsName);
+        System.out.println("////////////////////////////////");
+
+        System.out.println(studentsName.get(0));
+        System.out.println(studentsName.get(1));
+
+        new Thread(() ->
+        {
+            System.out.println(studentsName.get(2));
+            System.out.println(studentsName.get(3));
+        }).start();
+
+        new Thread(() ->
+        {
+            System.out.println(studentsName.get(4));
+            System.out.println(studentsName.get(5));
+        }).start();
+
+    }
+
+    @Override
+    public void getNameStudentsThreadSynch() {
+        Stream<Student> streamStudent = studentRepository.findAll().stream();
+        List<String> studentsName = streamStudent
+                .map(Student::getName)
+                .collect(Collectors.toList());
+
+        System.out.println(studentsName);
+        System.out.println("////////////////////////////////");
+
+        printStudent(studentsName.get(0));
+        printStudent(studentsName.get(1));
+
+        new Thread(() ->
+        {
+            printStudent(studentsName.get(2));
+            printStudent(studentsName.get(3));
+        }).start();
+
+        new Thread(() ->
+        {
+            printStudent(studentsName.get(4));
+            printStudent(studentsName.get(5));
+        }).start();
+    }
+
+    private synchronized void printStudent(String name) {
+        System.out.println(name);
     }
 }
