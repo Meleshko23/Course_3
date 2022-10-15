@@ -52,11 +52,6 @@ public class FacultyController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/sum")
-    public ResponseEntity<Integer> sum() {
-        Integer sum = facultyServiceImpl.sum();
-        return ResponseEntity.ok(sum);
-    }
 
     @PostMapping
     public Faculty createFaculty(@RequestBody Faculty faculty) {

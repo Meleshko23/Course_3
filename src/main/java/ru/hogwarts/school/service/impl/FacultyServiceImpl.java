@@ -2,6 +2,7 @@ package ru.hogwarts.school.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -10,7 +11,7 @@ import ru.hogwarts.school.service.FacultyService;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -57,20 +58,21 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public List<String> getLongestNameFaculties() {
-        Stream<Faculty> facultyStream = facultyRepository.findAll().stream();
-        Integer maxLength = facultyStream
+        logger.info("Was invoked method for find faculty name with max length");
+
+        Optional<String> maxFacultyName = facultyRepository
+                .findAll()
+                .stream()
                 .map(Faculty::getName)
-                .map(String::length)
-                .max(Comparator.naturalOrder())
-                .orElse(null);
-        if (maxLength == null) {
-            return null;
+                .max(Comparator.comparing(String::length));
+
+        if (maxFacultyName.isEmpty()) {
+            logger.error("There is no faculties at all");
+            return (List<String>) ResponseEntity.notFound().build();
+        } else {
+            logger.debug("Faculty name with max length: {}", maxFacultyName.get());
+            return (List<String>) ResponseEntity.ok(maxFacultyName.get());
         }
-        Stream<Faculty> facultyStream2 = facultyRepository.findAll().stream();
-        return facultyStream2
-                .map(Faculty::getName)
-                .filter((name) -> name.length() == maxLength)
-                .collect(Collectors.toList());
     }
 
     @Override

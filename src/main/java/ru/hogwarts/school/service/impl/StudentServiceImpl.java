@@ -1,6 +1,5 @@
 package ru.hogwarts.school.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +15,11 @@ import ru.hogwarts.school.service.StudentService;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -134,22 +135,20 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<String> getStudentsNameWithA() {
-        Stream<Student> streamStudent = studentRepository.findAll().stream();
-        return streamStudent
+        return studentRepository.findAll().stream()
                 .map(Student::getName)
-                .filter(name -> name.startsWith("A"))
                 .map(String::toLowerCase)
-                .map(StringUtils::capitalize)
+                .filter(s -> s.startsWith("A"))
+                .sorted()
                 .collect(Collectors.toList());
     }
 
     @Override
     public Double getAvgAgeStudentStream() {
-        Stream<Student> streamStudent = studentRepository.findAll().stream();
-        Optional<Double> result = Optional.of(streamStudent
+        return studentRepository.findAll()
+                .stream()
                 .mapToInt(Student::getAge)
                 .average()
-                .getAsDouble());
-        return result.orElse(null);
+                .orElse(0);
     }
 }
