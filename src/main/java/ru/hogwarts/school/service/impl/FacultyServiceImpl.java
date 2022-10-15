@@ -20,29 +20,18 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     public Faculty createFaculty(Faculty faculty) {
-        logger.debug("Was created {}", faculty);
+        logger.info("Was invoked method for create faculty with body {}", faculty);
         return facultyRepository.save(faculty);
     }
 
     public Faculty getFacultyById(Long id) {
-//        logger.info("Was invoked method to find faculty by id={}", id);
-//        Optional<Faculty> byId = facultyRepository.findById(id);
-//        if (byId.isEmpty()) {
-//            logger.error("There is no faculty with id={}", id);
+        logger.info("Was invoked method to find faculty by id={}", id);
         return facultyRepository.findById(id).orElse(null);
-//        }
-//        logger.debug("Faculty was founder by id={}", id);
-//        return byId.get();
     }
 
     public Faculty updateFaculty(Faculty faculty) {
-//        logger.info("Was invoked method to update faculty");
-//        if (facultyRepository.findById(faculty.getId()).isEmpty()) {
-//            logger.error("There is no faculty with your id");
+        logger.info("Was invoked method to update faculty");
         return facultyRepository.save(faculty);
-//        }
-//        logger.debug("{} was updated", faculty);
-//        return facultyRepository.save(faculty);
     }
 
     public void removeFaculty(Long id) {
@@ -52,11 +41,13 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Collection<Faculty> getAll() {
+        logger.info("Was invoked method for getting all faculties");
         return facultyRepository.findAll();
     }
 
     @Override
     public Collection<Faculty> findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(String nameOrColor) {
+        logger.info("Was invoked method for find faculties by color or name: {}", nameOrColor);
         return facultyRepository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(nameOrColor, nameOrColor);
     }
 
