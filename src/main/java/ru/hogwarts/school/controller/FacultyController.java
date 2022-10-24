@@ -18,6 +18,11 @@ public class FacultyController {
         this.facultyServiceImpl = facultyServiceImpl;
     }
 
+    @PostMapping
+    public Faculty createFaculty(@RequestBody Faculty faculty) {
+        return facultyServiceImpl.createFaculty(faculty);
+    }
+
     @GetMapping("/{id}")
     public Faculty getFaculty(@PathVariable Long id) {
         return facultyServiceImpl.getFacultyById(id);
@@ -29,9 +34,8 @@ public class FacultyController {
     }
 
     @GetMapping(params = "nameOrColor")
-    public ResponseEntity<Collection<Faculty>> findFacultiesNameOrColor(@RequestParam String nameOrColor) {
-        Collection<Faculty> fa = facultyServiceImpl.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(nameOrColor);
-        return ResponseEntity.ok(fa);
+    public Collection<Faculty> findFacultiesNameOrColor(@RequestParam("nameOrColor") String nameOrColor) {
+        return facultyServiceImpl.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(nameOrColor);
     }
 
     @GetMapping("/{id}/students")
@@ -52,12 +56,6 @@ public class FacultyController {
         return ResponseEntity.ok(result);
     }
 
-
-    @PostMapping
-    public Faculty createFaculty(@RequestBody Faculty faculty) {
-        return facultyServiceImpl.createFaculty(faculty);
-    }
-
     @PutMapping
     public Faculty updateFaculty(@RequestBody Faculty faculty) {
         return facultyServiceImpl.updateFaculty(faculty);
@@ -68,4 +66,5 @@ public class FacultyController {
         facultyServiceImpl.removeFaculty(id);
         return ResponseEntity.ok().build();
     }
+
 }

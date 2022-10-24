@@ -3,7 +3,6 @@ package ru.hogwarts.school.model;
 import javax.persistence.*;
 import java.util.Objects;
 
-
 @Entity
 public class Student {
 
@@ -19,10 +18,6 @@ public class Student {
 
     public Student() {
     }
-
-//    public Student(String name, int age){
-//        this(name, age);
-//    }
 
     public Student(Long id, String name, int age) {
         this.id = id;
@@ -81,4 +76,5 @@ public class Student {
     public Faculty getFaculty() {
         return faculty;
     }
+
 }

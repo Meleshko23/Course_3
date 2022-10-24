@@ -1,6 +1,5 @@
 package ru.hogwarts.school.model;
 
-
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Objects;
@@ -107,4 +106,5 @@ public class Avatar {
                 ", student=" + student +
                 '}';
     }
+
 }

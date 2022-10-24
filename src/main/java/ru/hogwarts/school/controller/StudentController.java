@@ -21,6 +21,11 @@ public class StudentController {
         this.studentServiceImpl = studentServiceImpl;
     }
 
+    @PostMapping
+    public Student createStudent(@RequestBody Student student) {
+        return studentServiceImpl.addStudent(student);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable Long id) {
         Student student = studentServiceImpl.findStudent(id);
@@ -80,11 +85,6 @@ public class StudentController {
         studentServiceImpl.getNameStudentsThreadSynch();
     }
 
-    @PostMapping
-    public Student createStudent(@RequestBody Student student) {
-        return studentServiceImpl.addStudent(student);
-    }
-
     @PutMapping
     public ResponseEntity<Student> editStudent(@RequestBody Student student) {
         Student foundStudent = studentServiceImpl.editStudent(student);
@@ -96,4 +96,5 @@ public class StudentController {
         studentServiceImpl.deleteStudent(id);
         return ResponseEntity.ok().build();
     }
+
 }
